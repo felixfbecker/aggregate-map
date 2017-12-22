@@ -1,0 +1,47 @@
+
+language: node_js
+
+node_js:
+  - '8'
+
+cache:
+  directories:
+    - ~/.npm
+
+env:
+  global:
+    - FORCE_COLOR=true
+
+script:
+  - npm run prettier
+  - npm run lint
+  - npm run build
+  - npm run cover
+  - nyc report -r json
+  - bash <(curl -s https://codecov.io/bash) -f coverage/coverage-final.json
+
+jobs:
+  include:
+    - stage: test
+    - stage: release
+      node_js: '8'
+      script:
+        - npm run build
+        - npm run semantic-release
+      before_deploy:
+        - npm run typedoc
+      deploy:
+        skip_cleanup: true
+        provider: surge
+        project: ./typedoc/
+        domain: aggregate-map.surge.sh
+
+stages:
+  - test
+  - name: release
+    if: branch = master AND type = push AND fork = false
+
+branches:
+  only:
+    - master
+    - /^greenkeeper.*$/

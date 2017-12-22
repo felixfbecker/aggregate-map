@@ -1,0 +1,12 @@
+.editorconfig
+.gitignore
+.nyc_output/
+.prettierignore
+.prettierrc
+.travis.yml
+*.test.*
+coverage/
+src/
+tsconfig.json
+tslint.json
+typedoc/
